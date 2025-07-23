@@ -13,9 +13,16 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-latest
+          - macos-12
           - macos-14
     steps:
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ matrix.os }}-brew-${{ hashFiles('.github/workflows/Test.yml') }}
+          restore-keys: |
+            ${{ matrix.os }}-brew-
       - name: brew tap
         run: brew tap messense/macos-cross-toolchains
       - name: brew install
