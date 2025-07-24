@@ -51,7 +51,7 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install coreutils gnu-tar gnu-sed gnu-make
+          brew install coreutils gnu-tar gnu-sed make
           brew install --HEAD crosstool-ng
 
           # Configure PATH to prefer GNU tools
@@ -59,7 +59,7 @@ jobs:
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-tar)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> $GITHUB_PATH
-          echo "$(brew --prefix gnu-make)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
 
           # Fixed python env command with --overwrite flag
           #     # Fix Python availability
