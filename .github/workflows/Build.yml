@@ -49,7 +49,7 @@ jobs:
           key: ${{ matrix.os.name }}-brew-${{ hashFiles('.github/workflows/Build.yml') }}
           restore-keys: |
             ${{ matrix.os.name }}-brew-
-      - name: Install crosstool-ng
+      - name: Install crosstool-ng prerequisites
         run: |
           brew install autoconf automake bash binutils bison findutils gawk \
           git gnu-sed gnu-tar gettext help2man libtool make ncurses readline \
@@ -91,14 +91,18 @@ jobs:
           python3 --version
 
           echo "=== Path Information ==="
-          echo "$GITHUB_PATH"
+          echo "$GITHUB_PATH=$(cat $GITHUB_PATH)"
           echo "=== Environment Information ==="
-          echo "$GITHUB_ENV"
+          echo "$GITHUB_ENV=$(cat $GITHUB_ENV)"
           echo "=== Brew Binaries ==="
           echo "$(find $(brew --prefix)/bin/ -ls )"
 
       - name: Install crosstool-ng
         run: |
+          echo "=== Path Information ==="
+          echo "$PATH"
+          echo "=== Environment Information ==="
+          echo "$(env)"
           brew install --HEAD crosstool-ng
 
       - name: Verify GNU tools are active
