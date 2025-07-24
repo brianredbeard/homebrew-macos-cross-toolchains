@@ -51,8 +51,7 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install coreutils gnu-tar gnu-sed make findutils grep gawk
-          brew install binutils diffutils ed gnu-indent gnu-which gnutls
+          brew install autoconf automake bash binutils bison gawk git gnu-sed gnu-tar gettext help2man libtool make ncurses readline texinfo wget xz zstd
           brew install --HEAD crosstool-ng
 
           # Configure PATH priority for GNU tools
@@ -65,8 +64,16 @@ jobs:
           echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
 
+          # LDFLAGS configuration
+          echo "LDFLAGS=-L${BREW_PREFIX}/opt/bison/lib -L${BREW_PREFIX}/opt/ncurses/lib" >> $GITHUB_ENV
+
+          # CPPFLAGS configuration
+          echo "CPPFLAGS=-I${BREW_PREFIX}/opt/binutils/include -I${BREW_PREFIX}/opt/ncurses/include" >> $GITHUB_ENV
+
+          # PKG_CONFIG_PATH configuration
+          echo "PKG_CONFIG_PATH=${BREW_PREFIX}/share/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
+
           # Fixed python env command with --overwrite flag
-          #     # Fix Python availability
           brew unlink python@3.12 && brew link --overwrite python@3.12
           ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
       - name: Verify GNU tools are active
