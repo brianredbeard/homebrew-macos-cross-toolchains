@@ -75,6 +75,10 @@ jobs:
           # PKG_CONFIG_PATH configuration
           echo "PKG_CONFIG_PATH=$(brew --prefix)/share/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
 
+          for python_package in $(brew list | grep python@); do
+            brew unlink ${python_package}
+            brew link --overwrite ${python_package}
+          done
           ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python3
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python
