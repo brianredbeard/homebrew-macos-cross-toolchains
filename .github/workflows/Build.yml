@@ -66,10 +66,6 @@ jobs:
           echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
 
-          # C compiler
-          echo "CC=gcc-15" >> $GITHUB_ENV
-          # C++ compiler
-          echo "CXX=g++-15" >> $GITHUB_ENV
           # LDFLAGS configuration
           echo "LDFLAGS=-L$(brew --prefix)/opt/bison/lib -L$(brew --prefix)/opt/ncurses/lib" >> $GITHUB_ENV
 
