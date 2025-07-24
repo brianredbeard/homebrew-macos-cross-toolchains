@@ -2,9 +2,9 @@ on:
   push:
     branches:
       - 'build/*'
-    tags: [ 'v*' ]
+    tags: ['v*']
   pull_request:
-    types: [ opened, synchronize, reopened, labeled ]
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
 
 name: Build
@@ -51,7 +51,9 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install autoconf automake bash binutils bison findutils gawk git gnu-sed gnu-tar gettext help2man libtool make ncurses readline texinfo wget xz zstd
+          brew install autoconf automake bash binutils bison findutils gawk \
+          git gnu-sed gnu-tar gettext help2man libtool make ncurses readline\
+          texinfo wget xz zstd
 
           # Configure PATH priority for GNU tools
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
@@ -89,12 +91,13 @@ jobs:
           python3 --version
 
           echo "=== Path Information ==="
-          echo $GITHUB_PATH
+          echo "$GITHUB_PATH"
           echo "=== Environment Information ==="
-          echo $GITHUB_ENV
+          echo "$GITHUB_ENV"
           echo "=== Brew Binaries ==="
-          echo "$(find $(brew --prefix)/bin/  -ls)"
-- name: Install crosstool-ng
+          echo "$(find $(brew --prefix)/bin/ -ls )"
+
+      - name: Install crosstool-ng
         run: |
           brew install --HEAD crosstool-ng
 
@@ -109,23 +112,23 @@ jobs:
           echo "Grep: $(which grep) -> $(grep --version | head -1)"
           echo "Find: $(which find) -> $(find --version | head -1)"
           echo "Awk: $(which awk) -> $(awk --version | head -1)"
-          
+
           # Verify these are GNU versions, not BSD
           if ! make --version | grep -q "GNU Make"; then
             echo "❌ GNU Make not found in PATH"
             exit 1
           fi
-          
+
           if ! tar --version | grep -q "GNU tar"; then
-            echo "❌ GNU tar not found in PATH" 
+            echo "❌ GNU tar not found in PATH"
             exit 1
           fi
-          
+
           if ! sed --version | grep -q "GNU sed"; then
             echo "❌ GNU sed not found in PATH"
             exit 1
           fi
-          
+
           echo "✅ All GNU tools verified"
       - name: Mount volumes
         run: |
