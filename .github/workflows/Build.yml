@@ -75,26 +75,31 @@ jobs:
           # PKG_CONFIG_PATH configuration
           echo "PKG_CONFIG_PATH=$(brew --prefix)/share/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
 
+          #Fix up python
+          echo "$(brew --prefix python)/libexec/bin" >> $GITHUB_PATH
           for python_package in $(brew list | grep python@); do
             brew unlink ${python_package}
             brew link --overwrite ${python_package}
           done
-          ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
-          ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
+          ln -sf $(brew --prefix python)/libexec/bin/python $(brew --prefix)/bin/python
+          ln -sf $(brew --prefix python)/libexec/bin/python $(brew --prefix)/bin/python3
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python3
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python
           which python3
           python3 --version
 
-          brew install --HEAD crosstool-ng
-      - name: Verify GNU tools are active
-        run: |
           echo "=== Path Information ==="
           echo $GITHUB_PATH
           echo "=== Environment Information ==="
           echo $GITHUB_ENV
           echo "=== Brew Binaries ==="
           echo "$(find $(brew --prefix)/bin/  -ls)"
+- name: Install crosstool-ng
+        run: |
+          brew install --HEAD crosstool-ng
+
+      - name: Verify GNU tools are active
+        run: |
           echo "=== Tool Verification ==="
           echo "Python: $(which python) -> $(python --version 2>&1)"
           echo "Python3: $(which python3) -> $(python3 --version 2>&1)"
