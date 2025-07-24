@@ -51,26 +51,53 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install coreutils gnu-tar gnu-sed make
+          brew install coreutils gnu-tar gnu-sed make findutils grep gawk
+          brew install binutils diffutils ed gnu-indent gnu-which gnutls
           brew install --HEAD crosstool-ng
 
-          # Configure PATH to prefer GNU tools
-          echo "/opt/homebrew/bin" >> $GITHUB_PATH
+          # Configure PATH priority for GNU tools
+          echo "$(brew --prefix)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-tar)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix findutils)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
 
           # Fixed python env command with --overwrite flag
           #     # Fix Python availability
           brew unlink python@3.12 && brew link --overwrite python@3.12
           ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
+      - name: Verify GNU tools are active
+        run: |
+          echo "=== Tool Verification ==="
+          echo "Python: $(which python) -> $(python --version 2>&1)"
+          echo "Python3: $(which python3) -> $(python3 --version 2>&1)"
+          echo "Make: $(which make) -> $(make --version | head -1)"
+          echo "Tar: $(which tar) -> $(tar --version | head -1)"
+          echo "Sed: $(which sed) -> $(sed --version | head -1)"
+          echo "Grep: $(which grep) -> $(grep --version | head -1)"
+          echo "Find: $(which find) -> $(find --version | head -1)"
+          echo "Awk: $(which awk) -> $(awk --version | head -1)"
           
-          # Verify tools
-          which python && python --version
-          which python3 && python3 --version
-          which make && make --version | head -1
-          which tar && tar --version | head -1
+          # Verify these are GNU versions, not BSD
+          if ! make --version | grep -q "GNU Make"; then
+            echo "❌ GNU Make not found in PATH"
+            exit 1
+          fi
+          
+          if ! tar --version | grep -q "GNU tar"; then
+            echo "❌ GNU tar not found in PATH" 
+            exit 1
+          fi
+          
+          if ! sed --version | grep -q "GNU sed"; then
+            echo "❌ GNU sed not found in PATH"
+            exit 1
+          fi
+          
+          echo "✅ All GNU tools verified"
       - name: Mount volumes
         run: |
           set -ex
