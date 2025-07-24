@@ -52,8 +52,8 @@ jobs:
       - name: Install crosstool-ng prerequisites
         run: |
           brew install autoconf automake bash binutils bison findutils gawk \
-          git gnu-sed gnu-tar gettext help2man libtool make ncurses readline \
-          texinfo wget xz zstd
+          gcc git gnu-sed gnu-tar gettext help2man libtool make ncurses \
+          readline texinfo wget xz zstd
 
           # Configure PATH priority for GNU tools
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
@@ -66,6 +66,10 @@ jobs:
           echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
 
+          # C compiler
+          echo "CC=gcc-15" >> $GITHUB_ENV
+          # C++ compiler
+          echo "CXX=g++-15" >> $GITHUB_ENV
           # LDFLAGS configuration
           echo "LDFLAGS=-L$(brew --prefix)/opt/bison/lib -L$(brew --prefix)/opt/ncurses/lib" >> $GITHUB_ENV
 
