@@ -51,13 +51,13 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install autoconf automake bash binutils bison gawk git gnu-sed gnu-tar gettext help2man libtool make ncurses readline texinfo wget xz zstd
-          brew install --HEAD crosstool-ng
+          brew install autoconf automake bash binutils bison findutils gawk git gnu-sed gnu-tar gettext help2man libtool make ncurses readline texinfo wget xz zstd
 
           # Configure PATH priority for GNU tools
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix binutils)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
+          echo "$(brew --prefix findutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-tar)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix libtool)/libexec/gnubin" >> $GITHUB_PATH
@@ -80,12 +80,21 @@ jobs:
             brew link --overwrite ${python_package}
           done
           ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
+          ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python3
           sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python
           which python3
           python3 --version
+
+          brew install --HEAD crosstool-ng
       - name: Verify GNU tools are active
         run: |
+          echo "=== Path Information ==="
+          echo $GITHUB_PATH
+          echo "=== Environment Information ==="
+          echo $GITHUB_ENV
+          echo "=== Brew Binaries ==="
+          echo "$(find $(brew --prefix)/bin/  -ls)"
           echo "=== Tool Verification ==="
           echo "Python: $(which python) -> $(python --version 2>&1)"
           echo "Python3: $(which python3) -> $(python3 --version 2>&1)"
