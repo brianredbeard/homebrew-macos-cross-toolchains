@@ -52,7 +52,7 @@ jobs:
       - name: Install crosstool-ng
         run: |
           brew install autoconf automake bash binutils bison findutils gawk \
-          git gnu-sed gnu-tar gettext help2man libtool make ncurses readline\
+          git gnu-sed gnu-tar gettext help2man libtool make ncurses readline \
           texinfo wget xz zstd
 
           # Configure PATH priority for GNU tools
