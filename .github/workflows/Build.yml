@@ -64,7 +64,6 @@ jobs:
           echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix libtool)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-          echo "$(brew --prefix findutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
 
@@ -76,6 +75,8 @@ jobs:
 
           # PKG_CONFIG_PATH configuration
           echo "PKG_CONFIG_PATH=$(brew --prefix)/share/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
+          echo "CT_MAKE_FOR_BUILD=\"$(command -v gmake)\"" >> $GITHUB_ENV
+          echo "CT_MAKE_FOR_HOST=\"$(command -v gmake)\"" >> $GITHUB_ENV
 
           #Fix up python
           echo "$(brew --prefix python)/libexec/bin" >> $GITHUB_PATH
@@ -85,8 +86,6 @@ jobs:
           done
           ln -sf $(brew --prefix python)/libexec/bin/python $(brew --prefix)/bin/python
           ln -sf $(brew --prefix python)/libexec/bin/python $(brew --prefix)/bin/python3
-          sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python3
-          sudo ln -sf $(brew --prefix)/bin/python3 /usr/local/bin/python
           which python3
           python3 --version
 
@@ -95,7 +94,7 @@ jobs:
           echo "=== Environment Information ==="
           echo "$GITHUB_ENV=$(cat $GITHUB_ENV)"
           echo "=== Brew Binaries ==="
-          echo "$(find $(brew --prefix)/bin/ -ls )"
+          echo "$(find $(brew --prefix)/bin -ls | sort -k 11)"
 
       - name: Install crosstool-ng
         run: |
