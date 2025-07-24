@@ -51,16 +51,31 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng
         run: |
-          brew install coreutils
+          brew install coreutils gnu-tar gnu-sed gnu-make
           brew install --HEAD crosstool-ng
+
+          # Configure PATH to prefer GNU tools
+          echo "/opt/homebrew/bin" >> $GITHUB_PATH
+          echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix gnu-tar)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix gnu-make)/libexec/gnubin" >> $GITHUB_PATH
+
           # Fixed python env command with --overwrite flag
+          #     # Fix Python availability
           brew unlink python@3.12 && brew link --overwrite python@3.12
-          python3 --version
+          ln -sf $(brew --prefix)/bin/python3 $(brew --prefix)/bin/python
+          
+          # Verify tools
+          which python && python --version
+          which python3 && python3 --version
+          which make && make --version | head -1
+          which tar && tar --version | head -1
       - name: Mount volumes
         run: |
           set -ex
-          hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 16g -volname build build.dmg
-          hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 1g -volname tools tools.dmg
+          hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 18g -volname build build.dmg
+          hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 2g -volname tools tools.dmg
           hdiutil attach build.dmg.sparseimage
           hdiutil attach tools.dmg.sparseimage
           ls /Volumes
@@ -72,7 +87,14 @@ jobs:
           ct-ng build -j $(($(nproc) - 1))
       - name: Tail build.log on failure
         if: ${{ failure() }}
-        run: tail -n 500 ${{ matrix.target }}/build.log
+        run: |
+          echo "=== Host disk space ==="
+          df -h /
+          echo "=== Mounted volumes ==="
+          df -h /Volumes/build /Volumes/tools
+          echo "=== Sparse image sizes ==="
+          du -h build.dmg.sparseimage tools.dmg.sparseimage
+          tail -n 500 ${{ matrix.target }}/build.log
       - name: Archive Toolchain
         run: |
           set -ex
