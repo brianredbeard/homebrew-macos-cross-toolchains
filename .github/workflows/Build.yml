@@ -57,7 +57,6 @@ jobs:
 
           # Configure PATH priority for GNU tools
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
-          echo "$(brew --prefix binutils)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix findutils)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gnu-tar)/libexec/gnubin" >> $GITHUB_PATH
