@@ -51,9 +51,10 @@ jobs:
             ${{ matrix.os.name }}-brew-
       - name: Install crosstool-ng prerequisites
         run: |
-          brew install autoconf automake bash binutils bison findutils gawk \
-          gcc git gnu-sed gnu-tar gettext help2man libtool make ncurses \
-          readline texinfo wget xz zstd
+          brew install autoconf automake bash berkeley-db@5 binutils bison \
+          ca-certificates findutils flex gawk gcc gettext git gnu-sed gnu-tar \
+          help2man libtool lzip make ncurses openssl@3 perl readline sqlite \
+          texinfo wget xz zstd
 
           # Configure PATH priority for GNU tools
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
@@ -65,9 +66,6 @@ jobs:
           echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix grep)/libexec/gnubin" >> $GITHUB_PATH
           echo "$(brew --prefix gawk)/libexec/gnubin" >> $GITHUB_PATH
-
-          # GCC symlink
-          ln -sf $(brew --prefix gcc@15)/bin/gcc-15 $(brew --prefix)/bin/gcc
 
           # LDFLAGS configuration
           echo "LDFLAGS=-L$(brew --prefix)/opt/bison/lib -L$(brew --prefix)/opt/ncurses/lib" >> $GITHUB_ENV
