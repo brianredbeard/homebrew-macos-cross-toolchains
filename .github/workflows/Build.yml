@@ -100,9 +100,9 @@ jobs:
       - name: Install crosstool-ng
         run: |
           echo "=== Path Information ==="
-          echo "$PATH"
+          echo "$PATH" | sed 's/:/\n/g' 
           echo "=== Environment Information ==="
-          echo "$(env)"
+          echo "$(env | sort)"
           brew install --HEAD crosstool-ng
 
       - name: Verify GNU tools are active
@@ -157,7 +157,7 @@ jobs:
           df -h /Volumes/build /Volumes/tools
           echo "=== Sparse image sizes ==="
           du -h build.dmg.sparseimage tools.dmg.sparseimage
-          find /Volumes -name build.log
+          find /Volumes/{build,tools}/
           tail -n 500 /Volumes/build/src/${{ matrix.target }}/build.log
       - name: Archive Toolchain
         run: |
