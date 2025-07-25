@@ -157,7 +157,7 @@ jobs:
           df -h /Volumes/build /Volumes/tools
           echo "=== Sparse image sizes ==="
           du -h build.dmg.sparseimage tools.dmg.sparseimage
-          tail -n 500 ${{ matrix.target }}/build.log
+          tail -n 500 /Volumes/build/src/${{ matrix.target }}/build.log
       - name: Archive Toolchain
         run: |
           set -ex
